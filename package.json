@@ -1,6 +1,6 @@
 {
   "name": "my-custom-logger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "My implementation of logger pattern for using in my projects",
   "main": "logger.js",
   "scripts": {
