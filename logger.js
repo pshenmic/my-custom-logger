@@ -41,8 +41,10 @@ class Logger {
     _log(level, msg) {
         /* eslint-disable no-console */
         console[level](msg)
-        log[level](msg)
         /* eslint-enable no-console */
+        if (process.env.GRAYLOG_HOST) {
+            log[level](msg)
+        }
     }
 
     info(msg) {
