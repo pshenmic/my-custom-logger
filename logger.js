@@ -8,7 +8,7 @@ class Logger {
     constructor() {
         if (process.env.GRAYLOG_HOST) {
             log.setConfig({
-                fields: {environment, service: "graphql-api", hostname}, // optional; default fields for all messages
+                fields: {environment, service: process.env.SERVICE_NAME, hostname}, // optional; default fields for all messages
                 filter: [], // optional; filters to discard a message
                 transform: [], // optional; transformers for a message
                 broadcast: [], // optional; listeners of a message
