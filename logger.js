@@ -2,13 +2,25 @@ const log = require("gelf-pro")
 const os = require("os")
 const hostname = os.hostname()
 const environment = process.env.NODE_ENV
+const serviceName = process.env.SERVICE_NAME
+const graylogHost = process.env.GRAYLOG_HOST
 
 class Logger {
 
     constructor() {
-        if (process.env.GRAYLOG_HOST) {
+        const fields = {hostname}
+
+        if (serviceName) {
+            fields.service = serviceName
+        }
+
+        if (environment) {
+            fields.environment = environment
+        }
+
+        if (graylogHost) {
             log.setConfig({
-                fields: {environment, service: process.env.SERVICE_NAME, hostname}, // optional; default fields for all messages
+                fields, // optional; default fields for all messages
                 filter: [], // optional; filters to discard a message
                 transform: [], // optional; transformers for a message
                 broadcast: [], // optional; listeners of a message
@@ -17,7 +29,7 @@ class Logger {
                 adapterName: "tcp", // optional; currently supported "udp", "tcp" and "tcp-tls"; default: udp
                 adapterOptions: { // this object is passed to the adapter.connect() method
                     // common
-                    host: process.env.GRAYLOG_HOST, // optional; default: 127.0.0.1
+                    host: graylogHost, // optional; default: 127.0.0.1
                     port: 12201, // optional; default: 12201
                     // ... and so on
 
@@ -38,28 +50,48 @@ class Logger {
 
     }
 
-    _log(level, msg) {
+    _log(level, msg, metadata) {
         /* eslint-disable no-console */
         console[level](msg)
         /* eslint-enable no-console */
-        if (process.env.GRAYLOG_HOST) {
-            log[level](msg)
+        if (graylogHost) {
+            log[level](msg, metadata)
         }
     }
 
-    info(msg) {
-        this._log("info", msg)
+    /**
+     * Log info
+     * @param msg {string}
+     * @param metadata {object?} key-value (string -> string) object describing additional fields to be sent by graylog
+     */
+    info(msg, metadata) {
+        this._log("info", msg, metadata)
     }
 
-    warning(msg) {
+    /**
+     * Log warning
+     * @param msg
+     * @param metadata {object} key-value (string -> string) object describing additional fields to be sent by graylog
+     */
+    warning(msg, metadata) {
         this._log("warn", msg)
     }
 
-    debug(msg) {
+    /**
+     * Log debug
+     * @param msg
+     * @param metadata {object} key-value (string -> string) object describing additional fields to be sent by graylog
+     */
+    debug(msg, metadata) {
         this._log("debug", msg)
     }
 
-    error(msg) {
+    /**
+     * Log error
+     * @param msg
+     * @param metadata {object} key-value (string -> string) object describing additional fields to be sent by graylog
+     */
+    error(msg, metadata) {
         this._log("error", msg)
     }
 
