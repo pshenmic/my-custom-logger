@@ -13,3 +13,7 @@
 
 * Fixed error if gelf is not set
 * Added new env variable SERVICE_NAME
+
+## 1.0.3
+
+* Added metadata argument to the logger interface
